@@ -98,11 +98,13 @@ sys_uptime(void)
 
 // click the sys call number in p->tracemask
 // so as to tracing its calling afterwards
-uint64 
-sys_trace(void) {
-  int trace_sys_mask;
-  if (argint(0, &trace_sys_mask) < 0)
+uint64
+sys_trace(void)
+{
+  int n;
+  if(argint(0, &n) < 0)             // 将trapframe->a0读入
     return -1;
-  myproc()->tracemask |= trace_sys_mask;
-  return 0;
+  myproc()->TraceMask = n;          // set the TraceMask in proc struct
+  return 0; 
 }
+

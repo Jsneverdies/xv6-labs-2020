@@ -164,13 +164,14 @@ syscall(void)
 {
   int num;
   struct proc *p = myproc();
-
-  num = p->trapframe->a7; // 系统调用代号存在a7寄存器内
+  // 取得当前系统调用号
+  num = p->trapframe->a7;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    p->trapframe->a0 = syscalls[num](); // 返回值存在a0寄存器内
-    if (p->tracemask & (1 << num)) { // << 判断是否需要trace这个系统调用
-      // this process traces this sys call num
-      printf("%d: syscall %s -> %d\n", p->pid, sysnames[num], p->trapframe->a0);
+    p->trapframe->a0 = syscalls[num]();
+    // 如果当前系统调用需要被追踪，则打印出对应的调用信息
+    // 用&运算判断对应的位是否同为1
+    if(p->TraceMask & (1 << num)){                                                       
+      printf("%d: syscall %s -> %d\n", p->pid, sysnames[num], p->trapframe->a0);    
     }
   } else {
     printf("%d %s: unknown sys call %d\n",

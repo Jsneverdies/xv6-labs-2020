@@ -126,7 +126,7 @@ found:
   memset(&p->context, 0, sizeof(p->context));
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
-  p->tracemask = 0;
+  p->TraceMask = 0;
   return p;
 }
 
@@ -150,6 +150,7 @@ freeproc(struct proc *p)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
+  p->TraceMask = 0;
 }
 
 // Create a user page table for a given process,
@@ -274,7 +275,7 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
-  np->tracemask = p->tracemask;
+  np->TraceMask = p->TraceMask;
   np->parent = p;
 
   // copy saved user registers.
